@@ -128,13 +128,10 @@ function App() {
         />
         <color attach='background' args={['#030303']} />
         <mesh>
-          <planeGeometry args={[fontSize, fontSize]} />
-          {/*
-          <bufferGeometry ref={textGeometry} attach='geometry'>
+          <bufferGeometry key={textVertices.length} attach='geometry'>
             <bufferAttribute attach='attributes-position' array={textVertices} count={textVertices.length / 3} itemSize={3} />
             <bufferAttribute attach='attributes-uv' array={textUVs} count={textUVs.length / 2} itemSize={2} />
           </bufferGeometry>
-          */}
           <shaderMaterial 
             transparent
             side={THREE.FrontSide} 
