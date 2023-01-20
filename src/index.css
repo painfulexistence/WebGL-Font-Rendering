@@ -26,6 +26,16 @@ body {
   height: 100%;
 }
 
+#app {
+  width: 100%;
+  height: 100%;
+}
+
+#gl-container {
+  width: 100%;
+  height: 100%;
+}
+
 #overlay-ui {
   position: fixed;
   bottom: 0;
@@ -39,3 +49,20 @@ body {
   flex-direction: column;
   justify-content: space-around;
 }
+
+input[type="range"] {
+  -webkit-appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  background: #444444;
+  height: 0.5rem;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  margin-top: -3px;
+}
+
+
