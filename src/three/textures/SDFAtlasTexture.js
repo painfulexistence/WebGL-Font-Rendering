@@ -7,9 +7,8 @@ import {
 } from 'three'
 import TinySDF from '@mapbox/tiny-sdf'
 
-class GlyphAtlasTexture extends DataTexture {
+class SDFAtlasTexture extends DataTexture {
   constructor(text, fontSize, fontFamily) {
-    const now = performance.now()
     const sdf = new TinySDF({
       fontSize: 64,
       fontFamily: fontFamily,
@@ -39,8 +38,7 @@ class GlyphAtlasTexture extends DataTexture {
     this.magFilter = LinearFilter
     this.generateMipmaps = true
     this.needsUpdate = true
-    console.log(performance.now() - now)
   }
 }
 
-export default GlyphAtlasTexture
+export { SDFAtlasTexture }

@@ -1,9 +1,8 @@
 import { useState, useReducer, useRef, useMemo, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrthographicCamera, Stats } from '@react-three/drei'
-import { FrontSide } from 'three'
-import { SDFGlyphMaterial } from './materials/SDFGlyph'
-import GlyphAtlasTexture from './GlyphAtlasTexture'
+import { SDFAtlasTexture } from './three/textures/SDFAtlasTexture'
+import { EditableText } from './components/EditableText'
 
 const defaultFontSize = 32
 const defaultFontFamily = 'Arial'
@@ -32,76 +31,12 @@ function App() {
   })
   const [pointer, setPointer] = useState({ isDown: false, x: NaN, y: NaN })
   const [text, setText] = useState('人無一物以報天')
-  const [cursorIdx, setCursorIdx] = useState(0)
   const [fontSize, setFontSize] = useState(defaultFontSize)
   const [fontFamily, setFontFamily] = useState(defaultFontFamily)
-  const texture = useMemo(
-    () => new GlyphAtlasTexture(text, fontSize, fontFamily),
+  const fontTexture = useMemo(
+    () => new SDFAtlasTexture(text, fontSize, fontFamily),
     [text, fontFamily]
   )
-  const [textVertices, textUVs] = useMemo(() => {
-    let vertices = []
-    let UVs = []
-    var alignmentX = -text.length / 2.0
-    var alignmentY = -0.5
-    for (let i = 0; i < text.length; i++) {
-      vertices.push(
-        (1.0 + alignmentX + i) * fontSize,
-        (1.0 + alignmentY) * fontSize,
-        +0.0
-      )
-      vertices.push(
-        (0.0 + alignmentX + i) * fontSize,
-        (1.0 + alignmentY) * fontSize,
-        +0.0
-      )
-      vertices.push(
-        (0.0 + alignmentX + i) * fontSize,
-        (0.0 + alignmentY) * fontSize,
-        +0.0
-      )
-
-      vertices.push(
-        (0.0 + alignmentX + i) * fontSize,
-        (0.0 + alignmentY) * fontSize,
-        +0.0
-      )
-      vertices.push(
-        (1.0 + alignmentX + i) * fontSize,
-        (0.0 + alignmentY) * fontSize,
-        +0.0
-      )
-      vertices.push(
-        (1.0 + alignmentX + i) * fontSize,
-        (1.0 + alignmentY) * fontSize,
-        +0.0
-      )
-
-      UVs.push(1.0, 1.0)
-      UVs.push(0.0, 1.0)
-      UVs.push(0.0, 0.0)
-
-      UVs.push(0.0, 0.0)
-      UVs.push(1.0, 0.0)
-      UVs.push(1.0, 1.0)
-    }
-    return [new Float32Array(vertices), new Float32Array(UVs)]
-  }, [text, fontSize])
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      switch (e.code) {
-        case 'ArrowLeft':
-          setCursorIdx((prev) => Math.max(0, prev - 1))
-          break
-        case 'ArrowRight':
-          setCursorIdx((prev) => Math.min(text.length, prev + 1))
-          break
-      }
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [])
 
   const handleWheel = (e) => {
     dispatch({ type: 'zoom', payload: e.deltaY / 100.0 })
@@ -164,63 +99,7 @@ function App() {
             rotation={[0, 0, 0]}
           />
           <color attach="background" args={['#030303']} />
-          <mesh>
-            <bufferGeometry
-              key={`L${textVertices.length}S${fontSize}`}
-              attach="geometry"
-            >
-              <bufferAttribute
-                attach="attributes-position"
-                array={textVertices}
-                count={textVertices.length / 3}
-                itemSize={3}
-              />
-              <bufferAttribute
-                attach="attributes-uv"
-                array={textUVs}
-                count={textUVs.length / 2}
-                itemSize={2}
-              />
-            </bufferGeometry>
-            <shaderMaterial
-              transparent
-              side={FrontSide}
-              args={[
-                {
-                  ...SDFGlyphMaterial,
-                  uniforms: {
-                    buffer: { value: 0.75 },
-                    alphaThreshold: { value: 0 },
-                    uTexture: { value: texture }
-                  }
-                }
-              ]}
-            />
-          </mesh>
-          <instancedMesh key={text.length} args={[null, null, text.length]}>
-            <bufferGeometry attach="geometry">
-              <bufferAttribute
-                attach="attributes-position"
-                array={textVertices}
-                count={6}
-                itemSize={3}
-                meshPerAttribute={1}
-              />
-              <bufferAttribute
-                attach="attributes-uv"
-                array={textUVs}
-                count={6}
-                itemSize={2}
-                meshPerAttribute={1}
-              />
-            </bufferGeometry>
-            <rawShaderMaterial transparent side={FrontSide} args={[]} />
-            <meshBasicMaterial color="hotpink" />
-          </instancedMesh>
-          <mesh position={[(-text.length / 2 + cursorIdx) * fontSize, 0, 0]}>
-            <planeGeometry args={[0.5, fontSize]} />
-            <meshBasicMaterial color="white" />
-          </mesh>
+          <EditableText text={text} fontSize={fontSize} atlasTexture={fontTexture} />
         </Canvas>
       </div>
       <div id="overlay-ui">
