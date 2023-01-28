@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { TextMesh } from './TextMesh'
 
-const showCursor = true
+const showCursor = false
 
 function EditableText({text, fontSize, atlasTexture}) {
   const [cursorIdx, setCursorIdx] = useState(0)

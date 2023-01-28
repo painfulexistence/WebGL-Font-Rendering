@@ -1,8 +1,9 @@
-import { useState, useReducer, useRef, useMemo, useEffect } from 'react'
+import { useState, useReducer, useMemo, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { OrthographicCamera, Stats } from '@react-three/drei'
+import { Stats } from '@react-three/drei'
 import { SDFAtlasTexture } from './three/textures/SDFAtlasTexture'
 import { EditableText } from './components/EditableText'
+import { Camera2D } from './components/Camera2D'
 
 const defaultFontSize = 32
 const defaultFontFamily = 'Arial'
@@ -25,17 +26,18 @@ const reducer = (state, action) => {
 }
 
 function App() {
+  const [cameraReady, setCameraReady] = useState(false)
   const [transform, dispatch] = useReducer(reducer, {
     scale: 1.0,
     translate: { x: 0.0, y: 0.0 }
   })
   const [pointer, setPointer] = useState({ isDown: false, x: NaN, y: NaN })
-  const [text, setText] = useState('人無一物以報天')
-  const [fontSize, setFontSize] = useState(defaultFontSize)
   const [fontFamily, setFontFamily] = useState(defaultFontFamily)
+  const [fontSize, setFontSize] = useState(defaultFontSize)
+  const [inputText, setInputText] = useState('人無一物以報天')
   const fontTexture = useMemo(
-    () => new SDFAtlasTexture(text, fontSize, fontFamily),
-    [text, fontFamily]
+    () => new SDFAtlasTexture(inputText, fontSize, fontFamily),
+    [inputText, fontFamily]
   )
 
   const handleWheel = (e) => {
@@ -67,6 +69,10 @@ function App() {
     }
   }
 
+  const handleCameraReady = () => {
+    setCameraReady(true)
+  }
+
   return (
     <div id="app">
       <div id="gl-container">
@@ -86,20 +92,13 @@ function App() {
           }}
           style={{ cursor: pointer.isDown ? 'grabbing' : 'auto' }}
         >
-          <OrthographicCamera
-            makeDefault
-            zoom={Math.max(0, transform.scale)}
-            top={100}
-            bottom={-100}
-            left={-100}
-            right={100}
-            near={1}
-            far={100}
-            position={[transform.translate.x, transform.translate.y, 10]}
-            rotation={[0, 0, 0]}
-          />
+          <Camera2D translate={transform.translate} scale={transform.scale} onCameraReady={handleCameraReady} />
           <color attach="background" args={['#030303']} />
-          <EditableText text={text} fontSize={fontSize} atlasTexture={fontTexture} />
+          {
+            cameraReady ? (
+              <EditableText text={inputText} fontSize={fontSize} atlasTexture={fontTexture} />
+            ) : null
+          }
         </Canvas>
       </div>
       <div id="overlay-ui">
@@ -146,9 +145,9 @@ function App() {
           <br />
           <input
             type="text"
-            value={text}
+            value={inputText}
             autoFocus
-            onChange={(e) => setText(e.target.value)}
+            onChange={(e) => setInputText(e.target.value)}
           />
         </label>
       </div>
