@@ -10,8 +10,8 @@ The current implementation
 
 ## Building
 
-```
+```bash
 yarn
 yarn build
-yarn preview --port 8080 // Check out http://localhost:8080
+yarn preview --port 8080 # Check out http://localhost:8080
 ```
