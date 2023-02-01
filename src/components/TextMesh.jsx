@@ -76,15 +76,26 @@ function TextMesh({ text, fontSize, fontAtlas }) {
         +0.0
       )
       const { map, size } = fontAtlas.layout
-      const { x, y } = map.get(text[i])
-      const ds = 1.0 / size
-      UVs.push(ds * (x + 64), 1.0 - ds * y) // right-top
-      UVs.push(ds * x, 1.0 - ds * y) // left-top
-      UVs.push(ds * x, 1.0 - ds * (y + 64)) // left-bottom
+      if (map.has(text[i])) {
+        const { x, y } = map.get(text[i])
+        const ds = 1.0 / size
+        UVs.push(ds * (x + 64), 1.0 - ds * y)        // right-top
+        UVs.push(ds * x, 1.0 - ds * y)               // left-top
+        UVs.push(ds * x, 1.0 - ds * (y + 64))        // left-bottom
 
-      UVs.push(ds * x, 1.0 - ds * (y + 64)) // left-bottom
-      UVs.push(ds * (x + 64), 1.0 - ds * (y + 64)) //right-bottom
-      UVs.push(ds * (x + 64), 1.0 - ds * y) //right-top
+        UVs.push(ds * x, 1.0 - ds * (y + 64))        // left-bottom
+        UVs.push(ds * (x + 64), 1.0 - ds * (y + 64)) // right-bottom
+        UVs.push(ds * (x + 64), 1.0 - ds * y)        // right-top
+      } else {
+        // when the glyph is not in the atlas, draw a blank quad
+        UVs.push(0.0, 0.0)
+        UVs.push(0.0, 0.0)
+        UVs.push(0.0, 0.0)
+
+        UVs.push(0.0, 0.0)
+        UVs.push(0.0, 0.0)
+        UVs.push(0.0, 0.0)
+      }
     }
     return [new Float32Array(vertices), new Float32Array(UVs)]
   }, [text, fontSize])
