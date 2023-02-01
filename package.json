@@ -1,6 +1,5 @@
 {
   "name": "webgl-font-rendering",
-  "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -11,7 +10,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@mapbox/tiny-sdf": "^2.0.5",
+    "@mapbox/tiny-sdf": "https://github.com/painfulexistence/tiny-sdf",
     "@react-three/drei": "^9.51.23",
     "@react-three/fiber": "^8.10.0",
     "react": "^18.2.0",

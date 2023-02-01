@@ -481,10 +481,9 @@
     semver "^7.3.5"
     tar "^6.1.11"
 
-"@mapbox/tiny-sdf@^2.0.5":
+"@mapbox/tiny-sdf@https://github.com/painfulexistence/tiny-sdf":
   version "2.0.5"
-  resolved "https://registry.yarnpkg.com/@mapbox/tiny-sdf/-/tiny-sdf-2.0.5.tgz#cdba698d3d65087643130f9af43a2b622ce0b372"
-  integrity sha512-OhXt2lS//WpLdkqrzo/KwB7SRD8AiNTFFzuo9n14IBupzIMa67yGItcK7I2W9D8Ghpa4T04Sw9FWsKCJG50Bxw==
+  resolved "https://github.com/painfulexistence/tiny-sdf#44ce9c199e7f99b57f5950d329f466d4d447d16b"
 
 "@react-spring/animated@~9.6.1":
   version "9.6.1"
