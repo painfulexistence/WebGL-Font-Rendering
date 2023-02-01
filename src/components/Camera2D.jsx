@@ -1,13 +1,12 @@
-
 import { useRef, useEffect } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 
-function Camera2D({translate, scale, onCameraReady}) {
+function Camera2D({ translate, scale, onCameraReady }) {
   const ref = useRef()
-  const set = useThree(state => state.set)
+  const set = useThree((state) => state.set)
 
   useEffect(() => {
-    set({camera: ref.current})
+    set({ camera: ref.current })
     onCameraReady()
   }, [])
 

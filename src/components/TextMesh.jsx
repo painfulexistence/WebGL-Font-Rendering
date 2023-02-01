@@ -29,7 +29,7 @@ const GlyphMaterial = {
     }
 
     void main() {
-      float dist = texture2D(uTexture, vUv).a;
+      float dist = texture2D(uTexture, vUv).r;
       float alpha = calculateAlpha(dist);
       if (alpha < alphaThreshold) discard;
       gl_FragColor = vec4(1.0, 1.0, 1.0, alpha);
@@ -37,7 +37,7 @@ const GlyphMaterial = {
   `
 }
 
-function TextMesh({text, fontSize, atlasTexture}) {
+function TextMesh({ text, fontSize, fontAtlas }) {
   const [textVertices, textUVs] = useMemo(() => {
     let vertices = []
     let UVs = []
@@ -75,24 +75,23 @@ function TextMesh({text, fontSize, atlasTexture}) {
         (1.0 + alignmentY) * fontSize,
         +0.0
       )
+      const { map, size } = fontAtlas.layout
+      const { x, y } = map.get(text[i])
+      const ds = 1.0 / size
+      UVs.push(ds * (x + 64), 1.0 - ds * y) // right-top
+      UVs.push(ds * x, 1.0 - ds * y) // left-top
+      UVs.push(ds * x, 1.0 - ds * (y + 64)) // left-bottom
 
-      UVs.push(1.0, 1.0)
-      UVs.push(0.0, 1.0)
-      UVs.push(0.0, 0.0)
-
-      UVs.push(0.0, 0.0)
-      UVs.push(1.0, 0.0)
-      UVs.push(1.0, 1.0)
+      UVs.push(ds * x, 1.0 - ds * (y + 64)) // left-bottom
+      UVs.push(ds * (x + 64), 1.0 - ds * (y + 64)) //right-bottom
+      UVs.push(ds * (x + 64), 1.0 - ds * y) //right-top
     }
     return [new Float32Array(vertices), new Float32Array(UVs)]
   }, [text, fontSize])
 
   return (
     <mesh>
-      <bufferGeometry
-        key={`L${text.length}S${fontSize}`}
-        attach="geometry"
-      >
+      <bufferGeometry key={`L${text.length}S${fontSize}`} attach="geometry">
         <bufferAttribute
           attach="attributes-position"
           array={textVertices}
@@ -115,7 +114,7 @@ function TextMesh({text, fontSize, atlasTexture}) {
             uniforms: {
               buffer: { value: 0.75 },
               alphaThreshold: { value: 0 },
-              uTexture: { value: atlasTexture }
+              uTexture: { value: fontAtlas.texture }
             }
           }
         ]}
@@ -124,7 +123,7 @@ function TextMesh({text, fontSize, atlasTexture}) {
   )
 }
 
-function InstancedTextMesh({text, fontSize, atlasTexture}) {
+function InstancedTextMesh({ text, fontSize, atlasTexture }) {
   const [textVertices, textUVs] = useMemo(() => {
     let vertices = []
     let UVs = []

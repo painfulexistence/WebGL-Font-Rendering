@@ -3,7 +3,7 @@ import { TextMesh } from './TextMesh'
 
 const showCursor = false
 
-function EditableText({text, fontSize, atlasTexture}) {
+function EditableText({ text, fontSize, fontAtlas }) {
   const [cursorIdx, setCursorIdx] = useState(0)
 
   useEffect(() => {
@@ -18,7 +18,6 @@ function EditableText({text, fontSize, atlasTexture}) {
           break
         case 'Delete':
         case 'Backspace':
-
       }
     }
     window.addEventListener('keydown', handleKeyDown)
@@ -27,16 +26,13 @@ function EditableText({text, fontSize, atlasTexture}) {
 
   return (
     <group>
-      <TextMesh text={text} fontSize={fontSize} atlasTexture={atlasTexture} />
-      {
-        showCursor
-        ? (
-          <mesh position={[(-text.length / 2 + cursorIdx) * fontSize, 0, 0]}>
-            <planeGeometry args={[0.5, fontSize]} />
-            <meshBasicMaterial color="white" />
-          </mesh>
-        ) : null
-      }
+      <TextMesh text={text} fontSize={fontSize} fontAtlas={fontAtlas} />
+      {showCursor ? (
+        <mesh position={[(-text.length / 2 + cursorIdx) * fontSize, 0, 0]}>
+          <planeGeometry args={[0.5, fontSize]} />
+          <meshBasicMaterial color="white" />
+        </mesh>
+      ) : null}
     </group>
   )
 }

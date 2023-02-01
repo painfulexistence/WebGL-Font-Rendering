@@ -1,9 +1,9 @@
 import { useState, useReducer, useMemo, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Stats } from '@react-three/drei'
-import { SDFAtlasTexture } from './three/textures/SDFAtlasTexture'
-import { EditableText } from './components/EditableText'
+import { TextMesh } from './components/TextMesh'
 import { Camera2D } from './components/Camera2D'
+import { generateFontAtlas } from './utils/generateFontAtlas'
 
 const defaultFontSize = 32
 const defaultFontFamily = 'Arial'
@@ -35,10 +35,7 @@ function App() {
   const [fontFamily, setFontFamily] = useState(defaultFontFamily)
   const [fontSize, setFontSize] = useState(defaultFontSize)
   const [inputText, setInputText] = useState('人無一物以報天')
-  const fontTexture = useMemo(
-    () => new SDFAtlasTexture(inputText, fontSize, fontFamily),
-    [inputText, fontFamily]
-  )
+  const fontAtlas = useMemo(() => generateFontAtlas(inputText, fontFamily), [inputText, fontFamily])
 
   const handleWheel = (e) => {
     dispatch({ type: 'zoom', payload: e.deltaY / 100.0 })
@@ -92,13 +89,19 @@ function App() {
           }}
           style={{ cursor: pointer.isDown ? 'grabbing' : 'auto' }}
         >
-          <Camera2D translate={transform.translate} scale={transform.scale} onCameraReady={handleCameraReady} />
+          <Camera2D
+            translate={transform.translate}
+            scale={transform.scale}
+            onCameraReady={handleCameraReady}
+          />
           <color attach="background" args={['#030303']} />
-          {
-            cameraReady ? (
-              <EditableText text={inputText} fontSize={fontSize} atlasTexture={fontTexture} />
-            ) : null
-          }
+          {cameraReady && fontAtlas ? (
+            <TextMesh
+              text={inputText}
+              fontSize={fontSize}
+              fontAtlas={fontAtlas}
+            />
+          ) : null}
         </Canvas>
       </div>
       <div id="overlay-ui">
