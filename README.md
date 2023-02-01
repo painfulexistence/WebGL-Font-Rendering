@@ -2,6 +2,9 @@
 
 ## [Live Demo](https://webgl-font-rendering.onrender.com)
 
+- Use mouse wheel to zoom in/out
+- Use mouse drag to pan around
+
 ## Tech
 
 The current implementation
