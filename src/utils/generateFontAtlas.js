@@ -12,11 +12,11 @@ function generateFontAtlas(inputText, fontFamily) {
   const size = 64
 
   const sdf = new TinySDF({
-    fontSize: 58,
+    fontSize: 60,
     fontFamily: fontFamily,
-    fontWeight: 'normal',
-    buffer: 3,
-    radius: 5,
+    fontWeight: 'bold',
+    buffer: 2,
+    radius: 2,
     cutoff: 0.25
   })
 
