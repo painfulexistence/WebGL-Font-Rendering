@@ -1,6 +1,7 @@
 import { useState, useReducer, useMemo, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Stats } from '@react-three/drei'
+import { ResizeObserver } from '@juggle/resize-observer'
 import { TextMesh } from './components/TextMesh'
 import { Camera2D } from './components/Camera2D'
 import { generateFontAtlas } from './utils/generateFontAtlas'
@@ -75,6 +76,7 @@ function App() {
       <div id="gl-container">
         <Stats showPanel={0} />
         <Canvas
+          resize={{ polyfill: ResizeObserver }}
           dpr={window.devicePixelRatio}
           flat
           onWheel={handleWheel}

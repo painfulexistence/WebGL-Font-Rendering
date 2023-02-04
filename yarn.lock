@@ -466,6 +466,11 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
+"@juggle/resize-observer@~3.4.0":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.4.0.tgz#08d6c5e20cf7e4cc02fd181c4b0c225cd31dbb60"
+  integrity sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==
+
 "@mapbox/node-pre-gyp@^1.0.0":
   version "1.0.10"
   resolved "https://registry.yarnpkg.com/@mapbox/node-pre-gyp/-/node-pre-gyp-1.0.10.tgz#8e6735ccebbb1581e5a7e652244cadc8a844d03c"
@@ -482,8 +487,8 @@
     tar "^6.1.11"
 
 "@mapbox/tiny-sdf@https://github.com/painfulexistence/tiny-sdf":
-  version "2.0.5"
-  resolved "https://github.com/painfulexistence/tiny-sdf#44ce9c199e7f99b57f5950d329f466d4d447d16b"
+  version "2.0.6"
+  resolved "https://github.com/painfulexistence/tiny-sdf#5bd130204f341acfd974081a791be9397fb10c39"
 
 "@react-spring/animated@~9.6.1":
   version "9.6.1"

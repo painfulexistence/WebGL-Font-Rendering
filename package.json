@@ -10,6 +10,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@juggle/resize-observer": "~3.4.0",
     "@mapbox/tiny-sdf": "https://github.com/painfulexistence/tiny-sdf",
     "@react-three/drei": "^9.51.23",
     "@react-three/fiber": "^8.10.0",
