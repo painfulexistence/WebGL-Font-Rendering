@@ -1,6 +1,6 @@
 # WebGL Font Rendering
 
-An experiment with font rendering techniques.
+An experiment with font rendering techniques.<br>
 ([Olle Alvin (2020)](https://lup.lub.lu.se/luur/download?func=downloadFile&recordOId=9024910&fileOId=9024911) did an awesome literature review for this topic.)
 
 The current implementation is based on the signed distance field text rendering technique introduced by [Chirs Green (2007)](https://steamcdn-a.akamaihd.net/apps/valve/2007/SIGGRAPH2007_AlphaTestedMagnification.pdf). I would also like to implement the multi-channel signed distance field text rendering method proposed by [Viktor Chlumský (2015)](https://github.com/Chlumsky/msdfgen/files/3050967/thesis.pdf) later.
@@ -14,7 +14,8 @@ To-Do:
 
 - Use mouse wheel to zoom in/out
 - Use mouse drag to pan around
-  > **Note**
+
+  > **Note**<br>
   > Only supports displaying Extended ASCII characters for the moment
 
 ## Building
