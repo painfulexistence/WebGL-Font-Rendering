@@ -8,7 +8,7 @@ import { generateFontAtlas } from './utils/generateFontAtlas'
 
 const defaultFontSize = 32
 const defaultFontFamily = 'Arial'
-const defaultInputText = '人無一物以報天'
+const defaultInputText = 'abcdefg'
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -37,7 +37,7 @@ function App() {
   const [fontFamily, setFontFamily] = useState(defaultFontFamily)
   const [fontSize, setFontSize] = useState(defaultFontSize)
   const [inputText, setInputText] = useState(defaultInputText)
-  const fontAtlas = useMemo(() => generateFontAtlas(inputText, fontFamily), [inputText, fontFamily])
+  const fontAtlas = useMemo(() => generateFontAtlas(fontFamily), [fontFamily])
 
   const handleWheel = (e) => {
     dispatch({ type: 'zoom', payload: e.deltaY / 100.0 })
