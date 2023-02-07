@@ -17,12 +17,11 @@ describe('Font options', () => {
     const selectElm = screen.getByLabelText('Font Family')
     const fontFamilies = [
       'Arial',
-      'Verdana',
       'Times New Roman',
-      'Georgia',
+      'Verdana',
+      'Tahoma',
       'Monaco',
-      'Courier New',
-      'Papyrus'
+      'Courier New'
     ]
     const testFontFamily = fontFamilies[Math.floor(Math.random() * fontFamilies.length)]
     await user.selectOptions(selectElm, testFontFamily)

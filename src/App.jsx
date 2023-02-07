@@ -120,12 +120,11 @@ function App() {
           >
             {[
               'Arial',
-              'Verdana',
               'Times New Roman',
-              'Georgia',
+              'Verdana',
+              'Tahoma',
               'Monaco',
-              'Courier New',
-              'Papyrus'
+              'Courier New'
             ].map((font) => (
               <option
                 key={font}
