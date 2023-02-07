@@ -23,7 +23,8 @@ describe('Font options', () => {
       'Monaco',
       'Courier New'
     ]
-    const testFontFamily = fontFamilies[Math.floor(Math.random() * fontFamilies.length)]
+    const testFontFamily =
+      fontFamilies[Math.floor(Math.random() * fontFamilies.length)]
     await user.selectOptions(selectElm, testFontFamily)
     expect(selectElm.value).toBe(testFontFamily)
   })
@@ -75,7 +76,8 @@ describe('Input text', () => {
 
 function randomString(length) {
   let result = ''
-  const charSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+  const charSet =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
   for (let i = 0; i < length; i++) {
     result += charSet.charAt(Math.floor(Math.random() * charSet.length))
   }

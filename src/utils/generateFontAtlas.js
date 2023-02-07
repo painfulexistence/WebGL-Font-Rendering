@@ -3,7 +3,7 @@ import {
   UnsignedByteType,
   LinearFilter,
   LinearMipMapLinearFilter,
-  RedFormat,
+  RedFormat
 } from 'three'
 import TinySDF from '@mapbox/tiny-sdf'
 
@@ -34,8 +34,16 @@ function generateFontAtlas(fontFamily) {
   let alphaData = new Uint8ClampedArray(textureSize * textureSize)
   let map = new Map()
   let i = 0
-  for (let y = 0; y + gridSize <= textureSize && i < charSet.length; y += gridSize) {
-    for (let x = 0; x + gridSize <= textureSize && i < charSet.length; x += gridSize) {
+  for (
+    let y = 0;
+    y + gridSize <= textureSize && i < charSet.length;
+    y += gridSize
+  ) {
+    for (
+      let x = 0;
+      x + gridSize <= textureSize && i < charSet.length;
+      x += gridSize
+    ) {
       const char = charSet[i]
       if (!map.has(char)) {
         const { data, width, height, glyphTop } = sdf.draw(char)
@@ -44,20 +52,26 @@ function generateFontAtlas(fontFamily) {
             alphaData[(y + q) * textureSize + (x + p)] = data[q * width + p]
           }
         }
-        map.set(char, { x, y, w: width, h: height, t: glyphTop})
+        map.set(char, { x, y, w: width, h: height, t: glyphTop })
       }
       i++
     }
   }
 
-  const texture = new DataTexture(alphaData, textureSize, textureSize, RedFormat, UnsignedByteType)
+  const texture = new DataTexture(
+    alphaData,
+    textureSize,
+    textureSize,
+    RedFormat,
+    UnsignedByteType
+  )
   texture.flipY = true
   texture.minFilter = LinearMipMapLinearFilter
   texture.magFilter = LinearFilter
   texture.generateMipmaps = true
   texture.needsUpdate = true
 
-  return ({ texture, layout: { map, textureSize, gridSize } })
+  return { texture, layout: { map, textureSize, gridSize } }
 }
 
 export { generateFontAtlas }

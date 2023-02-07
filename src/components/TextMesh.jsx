@@ -1,14 +1,6 @@
 import { useEffect } from 'react'
 import { useMemo } from 'react'
-import {
-  FrontSide,
-  Vector3,
-  DataTexture,
-  UnsignedByteType,
-  LinearFilter,
-  LinearMipMapLinearFilter,
-  RedFormat,
-} from 'three'
+import { FrontSide, Vector3 } from 'three'
 
 const GlyphMaterial = {
   extensions: {
@@ -63,13 +55,17 @@ function TextMesh({ text, fontSize, fontAtlas }) {
         // when the glyph is in the atlas, put vec3(texture_coord_u, texture_coord_v, glyph_top) in the array for each vertex
         const { x, y, t } = map.get(text[i])
         const ds = 1.0 / textureSize
-        vertexData.push(ds * (x + gridSize), 1.0 - ds * y, t / gridSize)              // right-top corner
-        vertexData.push(ds * x, 1.0 - ds * y, t / gridSize)                           // left-top corner
-        vertexData.push(ds * x, 1.0 - ds * (y + gridSize), t / gridSize)              // left-bottom corner
+        vertexData.push(ds * (x + gridSize), 1.0 - ds * y, t / gridSize) // right-top corner
+        vertexData.push(ds * x, 1.0 - ds * y, t / gridSize) // left-top corner
+        vertexData.push(ds * x, 1.0 - ds * (y + gridSize), t / gridSize) // left-bottom corner
 
-        vertexData.push(ds * x, 1.0 - ds * (y + gridSize), t / gridSize)              // left-bottom corner
-        vertexData.push(ds * (x + gridSize), 1.0 - ds * (y + gridSize), t / gridSize) // right-bottom corner
-        vertexData.push(ds * (x + gridSize), 1.0 - ds * y, t / gridSize)              // right-top corner
+        vertexData.push(ds * x, 1.0 - ds * (y + gridSize), t / gridSize) // left-bottom corner
+        vertexData.push(
+          ds * (x + gridSize),
+          1.0 - ds * (y + gridSize),
+          t / gridSize
+        ) // right-bottom corner
+        vertexData.push(ds * (x + gridSize), 1.0 - ds * y, t / gridSize) // right-top corner
       } else {
         // when the glyph is not in the atlas, just draw a untextured quad
         vertexData.push(0.0, 0.0, 0.0)
@@ -89,9 +85,9 @@ function TextMesh({ text, fontSize, fontAtlas }) {
   }, [text, fontSize])
 
   useEffect(() => {
-    return (() => {
+    return () => {
       fontAtlas.texture.dispose()
-    })
+    }
   }, [fontAtlas])
 
   return (
@@ -112,7 +108,7 @@ function TextMesh({ text, fontSize, fontAtlas }) {
             ...GlyphMaterial,
             uniforms: {
               uTexture: { value: fontAtlas.texture },
-              uAlignment: { value: textAlignment },
+              uAlignment: { value: textAlignment }
             }
           }
         ]}
