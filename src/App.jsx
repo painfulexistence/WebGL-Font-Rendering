@@ -8,6 +8,7 @@ import { generateFontAtlas } from './utils/generateFontAtlas'
 
 const defaultFontSize = 32
 const defaultFontFamily = 'Arial'
+const defaultInputText = '人無一物以報天'
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -35,7 +36,7 @@ function App() {
   const [pointer, setPointer] = useState({ isDown: false, x: NaN, y: NaN })
   const [fontFamily, setFontFamily] = useState(defaultFontFamily)
   const [fontSize, setFontSize] = useState(defaultFontSize)
-  const [inputText, setInputText] = useState('人無一物以報天')
+  const [inputText, setInputText] = useState(defaultInputText)
   const fontAtlas = useMemo(() => generateFontAtlas(inputText, fontFamily), [inputText, fontFamily])
 
   const handleWheel = (e) => {
@@ -87,7 +88,10 @@ function App() {
           onPointerOut={handlePointerUp}
           onCreated={(state) => {
             const ctx = state.gl.getContext()
+            ctx.disable(ctx.DITHER)
             ctx.disable(ctx.DEPTH_TEST)
+            ctx.disable(ctx.SCISSOR_TEST)
+            ctx.disable(ctx.STENCIL_TEST)
           }}
           style={{ cursor: pointer.isDown ? 'grabbing' : 'auto' }}
         >
@@ -149,7 +153,6 @@ function App() {
           Text Input
           <br />
           <input
-            type="text"
             value={inputText}
             autoFocus
             onChange={(e) => setInputText(e.target.value)}

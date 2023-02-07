@@ -9,7 +9,7 @@ import TinySDF from '@mapbox/tiny-sdf'
 
 function generateFontAtlas(inputText, fontFamily) {
   const textureSize = 1024
-  const size = 64
+  const gridSize = 64
 
   const sdf = new TinySDF({
     fontSize: 60,
@@ -23,17 +23,17 @@ function generateFontAtlas(inputText, fontFamily) {
   let alphaData = new Uint8ClampedArray(textureSize * textureSize)
   let map = new Map()
   let i = 0
-  for (let y = 0; y + size <= textureSize && i < inputText.length; y += size) {
-    for (let x = 0; x + size <= textureSize && i < inputText.length; x += size) {
+  for (let y = 0; y + gridSize <= textureSize && i < inputText.length; y += gridSize) {
+    for (let x = 0; x + gridSize <= textureSize && i < inputText.length; x += gridSize) {
       const char = inputText[i]
       if (!map.has(char)) {
-        const { data, width, height } = sdf.draw(char)
+        const { data, width, height, glyphTop } = sdf.draw(char)
         for (let q = 0; q < height && y + q <= textureSize; q++) {
           for (let p = 0; p < width && x + p <= textureSize; p++) {
             alphaData[(y + q) * textureSize + (x + p)] = data[q * width + p]
           }
         }
-        map.set(char, { x, y })
+        map.set(char, { x, y, w: width, h: height, t: glyphTop})
       }
       i++
     }
@@ -46,7 +46,7 @@ function generateFontAtlas(inputText, fontFamily) {
   texture.generateMipmaps = true
   texture.needsUpdate = true
 
-  return ({ texture, layout: { map, size: textureSize } })
+  return ({ texture, layout: { map, textureSize, gridSize } })
 }
 
 export { generateFontAtlas }

@@ -1,5 +1,14 @@
+import { useEffect } from 'react'
 import { useMemo } from 'react'
-import { FrontSide } from 'three'
+import {
+  FrontSide,
+  Vector3,
+  DataTexture,
+  UnsignedByteType,
+  LinearFilter,
+  LinearMipMapLinearFilter,
+  RedFormat,
+} from 'three'
 
 const GlyphMaterial = {
   extensions: {
@@ -9,19 +18,27 @@ const GlyphMaterial = {
     precision mediump float;
 
     varying vec2 vUv;
+    uniform vec3 uAlignment;
 
     void main() {
-      vUv = uv;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      vUv = position.xy;
+      int i = gl_VertexID % 6;
+      float x = (i== 1 || i == 2 || i == 3) ? 0.0 : 1.0;
+      float y = (i == 2 || i == 3 || i == 4) ? 0.0 : 1.0;
+      vec2 pos = vec2(x + float(gl_VertexID / 6), y + position.z);
+      pos += uAlignment.xy;                                                             // Offset by text alignment
+      pos *= uAlignment.z;                                                              // Scale by font size
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(pos.x, pos.y, 0.0, 1.0);
     }
   `,
   fragmentShader: `
-    precision highp float;
+    precision mediump float;
 
     varying vec2 vUv;
     uniform sampler2D uTexture;
-    uniform float buffer;
-    uniform float alphaThreshold;
+
+    const float buffer = 0.75;
+    const float alphaThreshold = 0.0;
 
     float calculateAlpha(float dist) {
       float edgeWidth = 0.707 * length(vec2(dFdx(dist), dFdy(dist)));
@@ -38,82 +55,53 @@ const GlyphMaterial = {
 }
 
 function TextMesh({ text, fontSize, fontAtlas }) {
-  const [textVertices, textUVs] = useMemo(() => {
-    let vertices = []
+  const textUVs = useMemo(() => {
     let UVs = []
-    var alignmentX = -text.length / 2.0
-    var alignmentY = -0.5
     for (let i = 0; i < text.length; i++) {
-      vertices.push(
-        (1.0 + alignmentX + i) * fontSize,
-        (1.0 + alignmentY) * fontSize,
-        +0.0
-      )
-      vertices.push(
-        (0.0 + alignmentX + i) * fontSize,
-        (1.0 + alignmentY) * fontSize,
-        +0.0
-      )
-      vertices.push(
-        (0.0 + alignmentX + i) * fontSize,
-        (0.0 + alignmentY) * fontSize,
-        +0.0
-      )
-
-      vertices.push(
-        (0.0 + alignmentX + i) * fontSize,
-        (0.0 + alignmentY) * fontSize,
-        +0.0
-      )
-      vertices.push(
-        (1.0 + alignmentX + i) * fontSize,
-        (0.0 + alignmentY) * fontSize,
-        +0.0
-      )
-      vertices.push(
-        (1.0 + alignmentX + i) * fontSize,
-        (1.0 + alignmentY) * fontSize,
-        +0.0
-      )
-      const { map, size } = fontAtlas.layout
+      const { map, textureSize, gridSize } = fontAtlas.layout
       if (map.has(text[i])) {
-        const { x, y } = map.get(text[i])
-        const ds = 1.0 / size
-        UVs.push(ds * (x + 64), 1.0 - ds * y)        // right-top
-        UVs.push(ds * x, 1.0 - ds * y)               // left-top
-        UVs.push(ds * x, 1.0 - ds * (y + 64))        // left-bottom
+        // when the glyph is in the atlas, put vec3(texture_coord_u, texture_coord_v, glyph_top) in the array for each vertex
+        const { x, y, t } = map.get(text[i])
+        const ds = 1.0 / textureSize
+        UVs.push(ds * (x + gridSize), 1.0 - ds * y, t / gridSize)              // right-top corner
+        UVs.push(ds * x, 1.0 - ds * y, t / gridSize)                           // left-top corner
+        UVs.push(ds * x, 1.0 - ds * (y + gridSize), t / gridSize)              // left-bottom corner
 
-        UVs.push(ds * x, 1.0 - ds * (y + 64))        // left-bottom
-        UVs.push(ds * (x + 64), 1.0 - ds * (y + 64)) // right-bottom
-        UVs.push(ds * (x + 64), 1.0 - ds * y)        // right-top
+        UVs.push(ds * x, 1.0 - ds * (y + gridSize), t / gridSize)              // left-bottom corner
+        UVs.push(ds * (x + gridSize), 1.0 - ds * (y + gridSize), t / gridSize) // right-bottom corner
+        UVs.push(ds * (x + gridSize), 1.0 - ds * y, t / gridSize)              // right-top corner
       } else {
-        // when the glyph is not in the atlas, draw a blank quad
-        UVs.push(0.0, 0.0)
-        UVs.push(0.0, 0.0)
-        UVs.push(0.0, 0.0)
+        // when the glyph is not in the atlas, just draw a untextured quad
+        UVs.push(0.0, 0.0, 0.0)
+        UVs.push(0.0, 0.0, 0.0)
+        UVs.push(0.0, 0.0, 0.0)
 
-        UVs.push(0.0, 0.0)
-        UVs.push(0.0, 0.0)
-        UVs.push(0.0, 0.0)
+        UVs.push(0.0, 0.0, 0.0)
+        UVs.push(0.0, 0.0, 0.0)
+        UVs.push(0.0, 0.0, 0.0)
       }
     }
-    return [new Float32Array(vertices), new Float32Array(UVs)]
+    return new Float32Array(UVs)
+  }, [text])
+
+  const textAlignment = useMemo(() => {
+    return new Vector3(-text.length / 2, -0.5, fontSize)
   }, [text, fontSize])
 
+  useEffect(() => {
+    return (() => {
+      fontAtlas.texture.dispose()
+    })
+  }, [fontAtlas])
+
   return (
-    <mesh>
-      <bufferGeometry key={`L${text.length}S${fontSize}`} attach="geometry">
+    <mesh frustumCulled={false}>
+      <bufferGeometry key={`L${text.length}`} attach="geometry">
         <bufferAttribute
           attach="attributes-position"
-          array={textVertices}
-          count={textVertices.length / 3}
-          itemSize={3}
-        />
-        <bufferAttribute
-          attach="attributes-uv"
           array={textUVs}
-          count={textUVs.length / 2}
-          itemSize={2}
+          count={textUVs.length / 3}
+          itemSize={3}
         />
       </bufferGeometry>
       <shaderMaterial
@@ -123,9 +111,8 @@ function TextMesh({ text, fontSize, fontAtlas }) {
           {
             ...GlyphMaterial,
             uniforms: {
-              buffer: { value: 0.75 },
-              alphaThreshold: { value: 0 },
-              uTexture: { value: fontAtlas.texture }
+              uTexture: { value: fontAtlas.texture },
+              uAlignment: { value: textAlignment },
             }
           }
         ]}
@@ -134,78 +121,4 @@ function TextMesh({ text, fontSize, fontAtlas }) {
   )
 }
 
-function InstancedTextMesh({ text, fontSize, atlasTexture }) {
-  const [textVertices, textUVs] = useMemo(() => {
-    let vertices = []
-    let UVs = []
-    var alignmentX = -text.length / 2.0
-    var alignmentY = -0.5
-    for (let i = 0; i < text.length; i++) {
-      vertices.push(
-        (1.0 + alignmentX + i) * fontSize,
-        (1.0 + alignmentY) * fontSize,
-        +0.0
-      )
-      vertices.push(
-        (0.0 + alignmentX + i) * fontSize,
-        (1.0 + alignmentY) * fontSize,
-        +0.0
-      )
-      vertices.push(
-        (0.0 + alignmentX + i) * fontSize,
-        (0.0 + alignmentY) * fontSize,
-        +0.0
-      )
-
-      vertices.push(
-        (0.0 + alignmentX + i) * fontSize,
-        (0.0 + alignmentY) * fontSize,
-        +0.0
-      )
-      vertices.push(
-        (1.0 + alignmentX + i) * fontSize,
-        (0.0 + alignmentY) * fontSize,
-        +0.0
-      )
-      vertices.push(
-        (1.0 + alignmentX + i) * fontSize,
-        (1.0 + alignmentY) * fontSize,
-        +0.0
-      )
-
-      UVs.push(1.0, 1.0)
-      UVs.push(0.0, 1.0)
-      UVs.push(0.0, 0.0)
-
-      UVs.push(0.0, 0.0)
-      UVs.push(1.0, 0.0)
-      UVs.push(1.0, 1.0)
-    }
-    return [new Float32Array(vertices), new Float32Array(UVs)]
-  }, [text, fontSize])
-
-  return (
-    <instancedMesh key={text.length} args={[null, null, text.length]}>
-      <bufferGeometry attach="geometry">
-        <bufferAttribute
-          attach="attributes-position"
-          array={textVertices}
-          count={6}
-          itemSize={3}
-          meshPerAttribute={1}
-        />
-        <bufferAttribute
-          attach="attributes-uv"
-          array={textUVs}
-          count={6}
-          itemSize={2}
-          meshPerAttribute={1}
-        />
-      </bufferGeometry>
-      <rawShaderMaterial transparent side={FrontSide} args={[]} />
-      <meshBasicMaterial color="hotpink" />
-    </instancedMesh>
-  )
-}
-
-export { TextMesh, InstancedTextMesh }
+export { TextMesh }
