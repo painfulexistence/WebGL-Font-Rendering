@@ -7,8 +7,8 @@ The current implementation is based on the SDF text rendering technique from [Ch
 
 To-Do:
 
-- [] Replace tinySDF with [msdfgen-wasm](https://github.com/painfulexistence/msdfgen-wasm) to get better rendering result
-- [] Move the font texture generation procedure into a worker thread
+1. Replace tinySDF with [msdfgen-wasm](https://github.com/painfulexistence/msdfgen-wasm) to get better rendering result
+2. Move the font texture generation procedure into a worker thread
 
 ## [Live Demo](https://webgl-font-rendering.onrender.com)
 
