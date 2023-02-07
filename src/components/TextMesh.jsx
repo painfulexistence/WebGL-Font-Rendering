@@ -55,33 +55,33 @@ const GlyphMaterial = {
 }
 
 function TextMesh({ text, fontSize, fontAtlas }) {
-  const textUVs = useMemo(() => {
-    let UVs = []
+  const textVertexData = useMemo(() => {
+    let vertexData = []
     for (let i = 0; i < text.length; i++) {
       const { map, textureSize, gridSize } = fontAtlas.layout
       if (map.has(text[i])) {
         // when the glyph is in the atlas, put vec3(texture_coord_u, texture_coord_v, glyph_top) in the array for each vertex
         const { x, y, t } = map.get(text[i])
         const ds = 1.0 / textureSize
-        UVs.push(ds * (x + gridSize), 1.0 - ds * y, t / gridSize)              // right-top corner
-        UVs.push(ds * x, 1.0 - ds * y, t / gridSize)                           // left-top corner
-        UVs.push(ds * x, 1.0 - ds * (y + gridSize), t / gridSize)              // left-bottom corner
+        vertexData.push(ds * (x + gridSize), 1.0 - ds * y, t / gridSize)              // right-top corner
+        vertexData.push(ds * x, 1.0 - ds * y, t / gridSize)                           // left-top corner
+        vertexData.push(ds * x, 1.0 - ds * (y + gridSize), t / gridSize)              // left-bottom corner
 
-        UVs.push(ds * x, 1.0 - ds * (y + gridSize), t / gridSize)              // left-bottom corner
-        UVs.push(ds * (x + gridSize), 1.0 - ds * (y + gridSize), t / gridSize) // right-bottom corner
-        UVs.push(ds * (x + gridSize), 1.0 - ds * y, t / gridSize)              // right-top corner
+        vertexData.push(ds * x, 1.0 - ds * (y + gridSize), t / gridSize)              // left-bottom corner
+        vertexData.push(ds * (x + gridSize), 1.0 - ds * (y + gridSize), t / gridSize) // right-bottom corner
+        vertexData.push(ds * (x + gridSize), 1.0 - ds * y, t / gridSize)              // right-top corner
       } else {
         // when the glyph is not in the atlas, just draw a untextured quad
-        UVs.push(0.0, 0.0, 0.0)
-        UVs.push(0.0, 0.0, 0.0)
-        UVs.push(0.0, 0.0, 0.0)
+        vertexData.push(0.0, 0.0, 0.0)
+        vertexData.push(0.0, 0.0, 0.0)
+        vertexData.push(0.0, 0.0, 0.0)
 
-        UVs.push(0.0, 0.0, 0.0)
-        UVs.push(0.0, 0.0, 0.0)
-        UVs.push(0.0, 0.0, 0.0)
+        vertexData.push(0.0, 0.0, 0.0)
+        vertexData.push(0.0, 0.0, 0.0)
+        vertexData.push(0.0, 0.0, 0.0)
       }
     }
-    return new Float32Array(UVs)
+    return new Float32Array(vertexData)
   }, [text])
 
   const textAlignment = useMemo(() => {
@@ -99,8 +99,8 @@ function TextMesh({ text, fontSize, fontAtlas }) {
       <bufferGeometry key={`L${text.length}`} attach="geometry">
         <bufferAttribute
           attach="attributes-position"
-          array={textUVs}
-          count={textUVs.length / 3}
+          array={textVertexData}
+          count={textVertexData.length / 3}
           itemSize={3}
         />
       </bufferGeometry>
