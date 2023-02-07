@@ -1,14 +1,14 @@
 # WebGL Font Rendering
 
 An experiment with font rendering techniques.
-([Olle Alvin (2020)](https://lup.lub.lu.se/luur/download?func=downloadFile&recordOId=9024910&fileOId=9024911) has done an awesome literature review for this topic.)
+([Olle Alvin (2020)](https://lup.lub.lu.se/luur/download?func=downloadFile&recordOId=9024910&fileOId=9024911) did an awesome literature review for this topic.)
 
-The current implementation is based on the SDF text rendering technique from [Chirs Green (2007)](https://steamcdn-a.akamaihd.net/apps/valve/2007/SIGGRAPH2007_AlphaTestedMagnification.pdf). I would also like to implement the MSDF rendering proposed by [Viktor Chlumský (2015)](https://github.com/Chlumsky/msdfgen/files/3050967/thesis.pdf) later.
+The current implementation is based on the signed distance field text rendering technique introduced by [Chirs Green (2007)](https://steamcdn-a.akamaihd.net/apps/valve/2007/SIGGRAPH2007_AlphaTestedMagnification.pdf). I would also like to implement the multi-channel signed distance field text rendering method proposed by [Viktor Chlumský (2015)](https://github.com/Chlumsky/msdfgen/files/3050967/thesis.pdf) later.
 
 To-Do:
 
-1. Replace tinySDF with [msdfgen-wasm](https://github.com/painfulexistence/msdfgen-wasm) to get better rendering result
-2. Move the font texture generation procedure into a worker thread
+1. Move the font texture generation procedure into a worker thread
+2. Replace tinySDF with [msdfgen-wasm](https://github.com/painfulexistence/msdfgen-wasm) to get better rendering result
 
 ## [Live Demo](https://webgl-font-rendering.onrender.com)
 
