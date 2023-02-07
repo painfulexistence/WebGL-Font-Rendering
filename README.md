@@ -14,6 +14,8 @@ To-Do:
 
 - Use mouse wheel to zoom in/out
 - Use mouse drag to pan around
+  > **Note**
+  > Only supports displaying Extended ASCII characters for the moment
 
 ## Building
 
