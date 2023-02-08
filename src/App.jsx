@@ -7,8 +7,8 @@ import { Camera2D } from './components/Camera2D'
 import { generateFontAtlas } from './utils/generateFontAtlas'
 
 const defaultFontSize = 32
-const defaultFontFamily = 'Arial'
-const defaultInputText = 'abcdefg'
+const defaultFontFamily = 'Courier New'
+const defaultInputText = 'The quick brown fox jumps over the lazy dog'
 
 const reducer = (state, action) => {
   switch (action.type) {
