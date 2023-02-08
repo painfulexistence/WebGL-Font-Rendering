@@ -20,9 +20,7 @@ describe('Font options', () => {
       'Times New Roman',
       'Verdana',
       'Tahoma',
-      'Courier New',
-      'Lucida',
-      'Helvetica'
+      'Courier New'
     ]
     const testFontFamily =
       fontFamilies[Math.floor(Math.random() * fontFamilies.length)]
