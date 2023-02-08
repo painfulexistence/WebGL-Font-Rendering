@@ -123,8 +123,9 @@ function App() {
               'Times New Roman',
               'Verdana',
               'Tahoma',
-              'Monaco',
-              'Courier New'
+              'Courier New',
+              'Lucida',
+              'Helvetica'
             ].map((font) => (
               <option
                 key={font}
